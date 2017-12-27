@@ -16,7 +16,8 @@ func MergeDemo() {
 }
 
 func main() {
-	MergeDemo()
+	//MergeDemo()
+	fmt.Println("hello")
 
 }
 
