@@ -18,13 +18,18 @@ func MergeDemo() {
 
 func main() {
 	//MergeDemo()
-    var a animal
+    //var a animal
     var c cat
-    a=c
-    a.printInfo()
     var d dog
-    a=d
+    /*a=c
     a.printInfo()
+    a=d
+    a.printInfo()*/
+    //c.printInfo()
+    //d.printInfo()
+    invoke(&c)
+    invoke(&d)
+    c.printInfo()
 
 
 }
@@ -33,15 +38,19 @@ type animal interface {
 	printInfo()
 }
 
+func  invoke(a animal)  {
+	a.printInfo()
+}
+
 type cat int
 
 type dog int
 
-func (c cat) printInfo() {
+func (c *cat) printInfo() {
 	fmt.Println("cat!")
 }
 
-func (d dog) printInfo() {
+func (d *dog) printInfo() {
 	fmt.Println("dog!")
 }
 
