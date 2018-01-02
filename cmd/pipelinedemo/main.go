@@ -3,6 +3,7 @@ package main
 import (
 	"test1/pipeline"
 	"fmt"
+	//"net/http"
 )
 func MergeDemo() {
 	p1 := pipeline.ArraySource(2, 10, 6, 3, 8, 21, 16, 7, 5)
@@ -17,7 +18,32 @@ func MergeDemo() {
 
 func main() {
 	//MergeDemo()
-	fmt.Println("hello")
+    var a animal
+    var c cat
+    a=c
+    a.printInfo()
+    var d dog
+    a=d
+    a.printInfo()
+
 
 }
+
+type animal interface {
+	printInfo()
+}
+
+type cat int
+
+type dog int
+
+func (c cat) printInfo() {
+	fmt.Println("cat!")
+}
+
+func (d dog) printInfo() {
+	fmt.Println("dog!")
+}
+
+
 
