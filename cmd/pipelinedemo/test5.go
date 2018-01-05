@@ -54,4 +54,5 @@ func main() {
 	for _,v := range h {
 		v.SayHello()
 	}
+	fmt.Println(stu)
 }
