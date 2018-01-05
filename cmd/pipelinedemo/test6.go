@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ import (
 func main() {
 	http.HandleFunc("/", SayHello)
 	http.HandleFunc("/login", login)
+	http.HandleFunc("/upload", upload)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("error: ", err)
@@ -66,6 +68,36 @@ func login(w http.ResponseWriter, r *http.Request) {
 		for k, v := range r.Form["interest"] {
 			fmt.Printf("愛好%d: %s\n", k, v)
 		}
-
 	}
+}
+
+func upload(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Method:", r.Method)
+	if r.Method == "GET" {
+		curtime := time.Now().Unix()
+		h := md5.New()
+		io.WriteString(h, strconv.FormatInt(curtime, 10))
+		token := fmt.Sprintf("%x", h.Sum(nil))
+
+		t, _ := template.ParseFiles("tplfile/upload.gtpl")
+		t.Execute(w, token)
+	} else {
+		//POST
+		r.ParseMultipartForm(32 << 20)
+		file, handler, err := r.FormFile("uploadfile")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer file.Close()
+		fmt.Fprintf(w, "%v", handler.Header)
+		f, err := os.OpenFile("./test"+handler.Filename, os.O_WRONLY|os.O_CREATE, 066)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		defer f.Close()
+		io.Copy(f, file)
+	}
+
 }
