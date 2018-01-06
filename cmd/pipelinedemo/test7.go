@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func checkErr(err error) {
+/*func checkErr(err error) {
 	if err != nil {
 		panic(err)
 	}
@@ -34,9 +34,7 @@ func updatedata() {
 	checkErr(err)
 	_, err = stmt.Exec("manager room", "zxzxr")
 	checkErr(err)
-	/*affect, err := res.RowsAffected()
-	checkErr(err)
-	fmt.Println(affect)*/
+
 }
 
 func deletedata() {
@@ -62,11 +60,12 @@ func querydata() {
 	}
 
 }
+*/
 
 func main() {
 	//insertdata()
 	//updatedata()
 	//deletedata()
-	querydata()
+	//querydata()
 
 }
