@@ -1,10 +1,11 @@
 package main
 
 import (
-	"test1/pipeline"
 	"fmt"
+	"test1/pipeline"
 	//"net/http"
 )
+
 func MergeDemo() {
 	p1 := pipeline.ArraySource(2, 10, 6, 3, 8, 21, 16, 7, 5)
 	q1 := pipeline.InMemSort(p1)
@@ -17,20 +18,19 @@ func MergeDemo() {
 }
 
 func main() {
-	//MergeDemo()
-    //var a animal
-    var c cat
-    var d dog
-    /*a=c
-    a.printInfo()
-    a=d
-    a.printInfo()*/
-    //c.printInfo()
-    //d.printInfo()
-    invoke(&c)
-    invoke(&d)
-    c.printInfo()
-
+	MergeDemo()
+	//var a animal
+	var c cat
+	var d dog
+	/*a=c
+	  a.printInfo()
+	  a=d
+	  a.printInfo()*/
+	//c.printInfo()
+	//d.printInfo()
+	invoke(&c)
+	invoke(&d)
+	c.printInfo()
 
 }
 
@@ -38,7 +38,7 @@ type animal interface {
 	printInfo()
 }
 
-func  invoke(a animal)  {
+func invoke(a animal) {
 	a.printInfo()
 }
 
@@ -53,6 +53,3 @@ func (c *cat) printInfo() {
 func (d *dog) printInfo() {
 	fmt.Println("dog!")
 }
-
-
-
