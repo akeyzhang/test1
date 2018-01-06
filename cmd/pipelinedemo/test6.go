@@ -90,8 +90,8 @@ func upload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		defer file.Close()
-		fmt.Fprintf(w, "%v", handler.Header)
-		f, err := os.OpenFile("./test"+handler.Filename, os.O_WRONLY|os.O_CREATE, 066)
+		fmt.Fprintf(w, "File Header: %v", handler.Header)
+		f, err := os.OpenFile("./upload/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 066)
 		if err != nil {
 			fmt.Println(err)
 			return
