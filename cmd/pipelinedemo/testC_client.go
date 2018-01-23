@@ -26,7 +26,7 @@ func main() {
 		log.Fatal("dialing:", err)
 	}
 	// Synchronous call
-	args := Args{17, 8}
+	args := Args{16, 6}
 	var reply int
 	err = client.Call("Arith.Multiply", args, &reply)
 	if err != nil {

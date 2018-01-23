@@ -64,10 +64,11 @@ func QueryOrExce(sqlstr string) string {
 
 	} else {
 		//表明是Insert,update或delete語句
-		fmt.Println("not found!")
-	}
-	return ""
+		_, err = db.Exec(sqlstr)
+		checkErr(err)
+		return ""
 
+	}
 }
 
 func h_index(w http.ResponseWriter, r *http.Request) {
