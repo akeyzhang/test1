@@ -29,6 +29,7 @@ func h_webSocket(ws *websocket.Conn) {
 	for {
 		err := websocket.Message.Receive(ws, &str)
 		if err != nil {
+			fmt.Println("1111")
 			panic(err)
 		}
 		fmt.Println("接收的數據: ", str)

@@ -37,16 +37,16 @@ func deletedata() {
 }
 
 func querydata() {
-	var username, departname, created string
-	db, err := sql.Open("postgres", "postgresql://akey@localhost:26257/test?sslmode=disable")
+	var cust_no, cust_cname, cust_sname string
+	db, err := sql.Open("postgres", "postgresql://akey@113.108.248.46:26257/test?sslmode=disable")
 	checkErr(err)
 	defer db.Close()
-	rows, err := db.Query("SELECT * from userinfo ORDER BY username")
+	rows, err := db.Query("SELECT * from customer ORDER BY cust_no")
 	checkErr(err)
 	defer rows.Close()
 	for rows.Next() {
-		err = rows.Scan(&username, &departname, &created)
-		fmt.Println(username, departname, created)
+		err = rows.Scan(&cust_no, &cust_cname, &cust_sname)
+		fmt.Println(cust_no, cust_cname, cust_sname)
 	}
 
 }
