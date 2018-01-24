@@ -71,18 +71,32 @@ func QueryOrExce(sqlstr string) string {
 	}
 }
 
+//bkstr拆包函数
+func splitBkstr(bkstr string) (string, string) {
+	var bkno, sqlstr string
+	ipos := strings.Index(bkstr, "#**#")
+	bkno = bkstr[0:ipos]
+	sqlstr = bkstr[ipos+4 : len(bkstr)]
+	return bkno, sqlstr
+
+}
+
 func h_index(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
 
 func h_akeySql(ws *websocket.Conn) {
-	var sqlstr string
+	var bkstr string
 
 	for {
-		err := websocket.Message.Receive(ws, &sqlstr)
+		err := websocket.Message.Receive(ws, &bkstr)
 		checkErr(err)
-		fmt.Println("接收的sql語句: ", sqlstr)
+		fmt.Println(time.Now(), " 接收到的bkstr: ", bkstr)
+		//将bkstr拆包成两部分,bkno和sqlstr.
+		bkno, sqlstr := splitBkstr(bkstr)
 		resultstr := QueryOrExce(sqlstr)
+		//再将resultstr用bkno打包发送出去.
+		resultstr = bkno + "#**#" + resultstr
 		err = websocket.Message.Send(ws, resultstr)
 		checkErr(err)
 	}
