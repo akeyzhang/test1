@@ -22,7 +22,8 @@ func checkErr(err error) {
 	}
 }
 
-func QueryOrExce(sqlstr string) string {
+//sql語句解析處理函數
+func QueryOrExec(sqlstr string) string {
 	var dbConnStr string = "postgresql://akey@113.108.248.46:26257/test?sslmode=disable"
 	db, err := sql.Open("postgres", dbConnStr)
 	checkErr(err)
@@ -75,6 +76,7 @@ func h_index(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
 
+//通過websocket接收前台傳入的sql語句,並回傳解析處理後的結果(有可能是結果集的json串,也有可能是空串).
 func h_akeySql(ws *websocket.Conn) {
 	var sqlstr string
 
@@ -82,7 +84,7 @@ func h_akeySql(ws *websocket.Conn) {
 		err := websocket.Message.Receive(ws, &sqlstr)
 		checkErr(err)
 		fmt.Println("接收的sql語句: ", sqlstr)
-		resultstr := QueryOrExce(sqlstr)
+		resultstr := QueryOrExec(sqlstr)
 		err = websocket.Message.Send(ws, resultstr)
 		checkErr(err)
 	}
