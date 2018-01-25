@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"net/http"
 	"strings"
+	"test1/akeyfunction"
 	"time"
 )
 
@@ -22,8 +23,7 @@ func checkErr(err error) {
 	}
 }
 
-//sql語句解析處理函數
-func QueryOrExec(sqlstr string) string {
+func QueryOrExce(sqlstr string) string {
 	var dbConnStr string = "postgresql://akey@113.108.248.46:26257/test?sslmode=disable"
 	db, err := sql.Open("postgres", dbConnStr)
 	checkErr(err)
@@ -72,19 +72,32 @@ func QueryOrExec(sqlstr string) string {
 	}
 }
 
+//tagstr拆包函数
+func splitTagstr(tagstr string) (string, string) {
+	var tag, sqlstr string
+	ipos := strings.Index(tagstr, "#**#")
+	tag = tagstr[0:ipos]
+	sqlstr = tagstr[ipos+4 : len(tagstr)]
+	return tag, sqlstr
+
+}
+
 func h_index(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
 
-//通過websocket接收前台傳入的sql語句,並回傳解析處理後的結果(有可能是結果集的json串,也有可能是空串).
 func h_akeySql(ws *websocket.Conn) {
-	var sqlstr string
+	var tagstr string
 
 	for {
-		err := websocket.Message.Receive(ws, &sqlstr)
+		err := websocket.Message.Receive(ws, &tagstr)
 		checkErr(err)
-		fmt.Println("接收的sql語句: ", sqlstr)
-		resultstr := QueryOrExec(sqlstr)
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), " 接收到的tagstr: ", tagstr)
+		//将tagstr拆包成两部分,tag和sqlstr.
+		tag, sqlstr := splitTagstr(tagstr)
+		resultstr := QueryOrExce(sqlstr)
+		//再将resultstr用bkno打包发送出去.
+		resultstr = tag + "#**#" + resultstr
 		err = websocket.Message.Send(ws, resultstr)
 		checkErr(err)
 	}
@@ -93,7 +106,7 @@ func h_akeySql(ws *websocket.Conn) {
 
 func main() {
 	fmt.Println("启动时间")
-	fmt.Println(time.Now())
+	fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT))
 
 	http.HandleFunc("/", h_index)
 	//绑定socket方法
