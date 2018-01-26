@@ -1,31 +1,45 @@
 package main
 
+/*從sql2000導數據到cockroachDB的工具.*/
+
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-adodb"
+	"strings"
 )
 
-func checkErr(str string, err error) {
+func checkErr(tag string, err error) {
 	if err != nil {
-		fmt.Println(str)
+		fmt.Println(tag)
 		panic(err)
 	}
 }
 
 func main() {
-	db, err := sql.Open("adodb", "Provider=SQLOLEDB;Data Source=192.168.1.103;Initial Catalog=chen;User ID=sa;Password=dell1226")
+	mdb, err := sql.Open("adodb", "Provider=SQLOLEDB;Data Source=192.168.1.195;Initial Catalog=MRPII;User ID=sa;Password=123456")
 	checkErr("1111", err)
-	defer db.Close()
-
-	rows, err := db.Query("select username, password from users")
+	defer mdb.Close()
+	cdb, err := sql.Open("postgres", "postgresql://akey@192.168.1.129:26257/test?sslmode=disable")
 	checkErr("2222", err)
+	defer cdb.Close()
+
+	//從sql2000取數據 insert into cockroachDB.
+	rows, err := mdb.Query("select delv_no,delv_date,cust_no,user_no,upd_date from delvmain where upd_date>='2017-12-01'")
+	checkErr("3333", err)
 
 	for rows.Next() {
-		var username, password string
-		rows.Scan(&username, &password)
-		fmt.Println(username, password)
+		var delv_no, delv_date, cust_no, upd_date string
+		var user_no string
+		//fetch a row from sql2000.
+		rows.Scan(&delv_no, &delv_date, &cust_no, &user_no, &upd_date)
+		//fmt.Println(delv_no, delv_date, cust_no, user_no, upd_date)
+		sqlstr := "insert into delvmain values('" + strings.Trim(delv_no, " ") + "','" + delv_date + "','" + strings.Trim(cust_no, " ") + "'," + user_no + ",'" + upd_date + "')"
+		//fmt.Println(sqlstr)
+		//insert into cockroachDB delvmain table.
+		_, err = cdb.Exec(sqlstr)
+		checkErr("444", err)
 	}
 
-	//db.Exec("insert into users(username,password) values('aaa','bbb')")
 }

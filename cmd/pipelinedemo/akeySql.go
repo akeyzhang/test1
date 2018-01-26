@@ -2,9 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"github.com/golang/net/websocket"
+	//"github.com/json-iterator/go"
+	"encoding/json"
 	_ "github.com/lib/pq"
 	"net/http"
 	"strings"
@@ -115,8 +116,8 @@ func main() {
 	http.ListenAndServe(":666", nil)
 
 	//debug用
-	//var sqlstr string = "select cust_no,cust_sname from customer"
-	//result := QueryOrExce(sqlstr)
-	//fmt.Println(result)
+	/*	var sqlstr string = "select delv_no, delv_date, cust_no from delvmain order by delv_date"
+		result := QueryOrExce(sqlstr)
+		fmt.Println(result)*/
 
 }
