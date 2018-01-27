@@ -26,9 +26,11 @@ func main() {
 	defer cdb.Close()
 
 	//從sql2000取數據 insert into cockroachDB.
-	rows, err := mdb.Query("select delv_no,delv_date,cust_no,user_no,upd_date from delvmain where upd_date>='2017-12-01'")
+	rows, err := mdb.Query("select delv_no,delv_date,cust_no,user_no,upd_date from delvmain where upd_date>='2001-01-01' and upd_date<'2005-01-01'")
 	checkErr("3333", err)
 
+	fmt.Println("開始處理......")
+	icount := 0
 	for rows.Next() {
 		var delv_no, delv_date, cust_no, upd_date string
 		var user_no string
@@ -40,6 +42,11 @@ func main() {
 		//insert into cockroachDB delvmain table.
 		_, err = cdb.Exec(sqlstr)
 		checkErr("444", err)
+		icount += 1
+		if icount%1000 == 0 {
+			fmt.Println("已處理: ", icount)
+		}
 	}
+	fmt.Println("處理結束.")
 
 }
