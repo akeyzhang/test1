@@ -99,7 +99,13 @@ func h_akeySql(ws *websocket.Conn) {
 		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 接收到的tagstr: ", tagstr)
 		//将tagstr拆包成两部分,tag和sqlstr.
 		tag, sqlstr := splitTagstr(tagstr)
-		resultstr := QueryOrExce(sqlstr)
+		//预处理
+		resultstr := QueryOrExce("select  delv_no,delv_date,cust_no from delvmain where upd_date>=(now()-interval '6 month');")
+		resultstr = tag + "#**#" + resultstr
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送预处理JSON串...")
+		err = websocket.Message.Send(ws, resultstr)
+		checkErr(err)
+		resultstr = QueryOrExce(sqlstr)
 		//再将resultstr用bkno打包发送出去.
 		resultstr = tag + "#**#" + resultstr
 		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送JSON串...")
