@@ -25,6 +25,7 @@ func checkErr(err error) {
 }
 
 func QueryOrExce(sqlstr string) string {
+	fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 开始访问数据库...")
 	var dbConnStr string = "postgresql://akey@113.108.248.46:26257/test?sslmode=disable"
 	db, err := sql.Open("postgres", dbConnStr)
 	checkErr(err)
@@ -60,8 +61,10 @@ func QueryOrExce(sqlstr string) string {
 			}
 			tableData = append(tableData, entry)
 		}
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 数据生成完毕.")
 		jsonData, err := json.Marshal(tableData)
 		checkErr(err)
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 打包JSON串完毕.")
 		return string(jsonData)
 
 	} else {
@@ -93,12 +96,13 @@ func h_akeySql(ws *websocket.Conn) {
 	for {
 		err := websocket.Message.Receive(ws, &tagstr)
 		checkErr(err)
-		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), " 接收到的tagstr: ", tagstr)
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 接收到的tagstr: ", tagstr)
 		//将tagstr拆包成两部分,tag和sqlstr.
 		tag, sqlstr := splitTagstr(tagstr)
 		resultstr := QueryOrExce(sqlstr)
 		//再将resultstr用bkno打包发送出去.
 		resultstr = tag + "#**#" + resultstr
+		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送JSON串...")
 		err = websocket.Message.Send(ws, resultstr)
 		checkErr(err)
 	}
@@ -106,8 +110,8 @@ func h_akeySql(ws *websocket.Conn) {
 }
 
 func main() {
-	fmt.Println("启动时间")
-	fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT))
+	fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 开始启动...")
+	fmt.Println()
 
 	http.HandleFunc("/", h_index)
 	//绑定socket方法
