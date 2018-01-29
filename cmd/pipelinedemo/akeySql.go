@@ -100,7 +100,8 @@ func h_akeySql(ws *websocket.Conn) {
 		//将tagstr拆包成两部分,tag和sqlstr.
 		tag, sqlstr := splitTagstr(tagstr)
 		//预处理
-		resultstr := QueryOrExce("select  delv_no,delv_date,cust_no from delvmain where upd_date>=(now()-interval '6 month');")
+		presqlstr := sqlstr + " limit 500"
+		resultstr := QueryOrExce(presqlstr)
 		resultstr = tag + "#**#" + resultstr
 		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送预处理JSON串...")
 		err = websocket.Message.Send(ws, resultstr)
