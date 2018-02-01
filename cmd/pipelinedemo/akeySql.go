@@ -102,16 +102,18 @@ func h_akeySql(ws *websocket.Conn) {
 		//预处理
 		presqlstr := sqlstr + " limit 500"
 		resultstr := QueryOrExce(presqlstr)
-		resultstr = tag + "#**#" + resultstr
-		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送预处理JSON串...")
-		err = websocket.Message.Send(ws, resultstr)
-		checkErr(err)
-		resultstr = QueryOrExce(sqlstr)
-		//再将resultstr用bkno打包发送出去.
-		resultstr = tag + "#**#" + resultstr
-		fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送JSON串...")
-		err = websocket.Message.Send(ws, resultstr)
-		checkErr(err)
+		if resultstr != "" { //resultstr返回空白字串表示處理的是非select語句,不向客戶端返回處理結果.
+			resultstr = tag + "#**#" + resultstr
+			fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送预处理JSON串...")
+			err = websocket.Message.Send(ws, resultstr)
+			checkErr(err)
+			resultstr = QueryOrExce(sqlstr)
+			//再将resultstr用bkno打包发送出去.
+			resultstr = tag + "#**#" + resultstr
+			fmt.Println(time.Now().Format(akeyfunction.STANDARDDATEFORMAT), ": 向客户端发送JSON串...")
+			err = websocket.Message.Send(ws, resultstr)
+			checkErr(err)
+		}
 	}
 
 }
